@@ -17,6 +17,7 @@ public class ProjectileScript : MonoBehaviour
 
 	void OnCollisionEnter (Collision hit) {
 
+        if (hit.transform.root.tag.Equals("Player")) return;
         //transform.DetachChildren();
         impactParticle = Instantiate(impactParticle, transform.position, Quaternion.FromToRotation(Vector3.up, impactNormal)) as GameObject;
         //Debug.DrawRay(hit.contacts[0].point, hit.contacts[0].normal * 1, Color.yellow);
