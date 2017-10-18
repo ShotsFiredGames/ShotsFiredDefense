@@ -35,6 +35,9 @@ public class PlayerInput : MonoBehaviour
     }
     #endregion
 
+    [Header("Abilities")]
+    public bool _jetpack;
+
     public static float horizontal;
     public static float horizontal2;
 
@@ -48,10 +51,19 @@ public class PlayerInput : MonoBehaviour
     public static bool isFiring;
     public static bool isAiming;
 
+    public static bool jetpack;
+
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        SetAbilities();
+    }
+
+    void SetAbilities()
+    {
+        jetpack = _jetpack;
     }
 
     private void Update()

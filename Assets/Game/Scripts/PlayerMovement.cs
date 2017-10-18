@@ -14,6 +14,18 @@ public class PlayerMovement : MonoBehaviour
     public float gravity;
     public LayerMask ground;
 
+    [Space, Header("JetPack Variables")]
+    public float fuel = 100;
+    public float fuelConsumtionRate;
+    public float fuelRegenerationRate;
+
+    bool jetpack;
+    float currentFuel;
+    bool consumingFuel;
+    bool regainingFuel;
+    bool canUseJetPack;
+    bool jetPackOnCooldown;
+
     float horizontal;
     float vertical;
     
@@ -28,9 +40,24 @@ public class PlayerMovement : MonoBehaviour
 
     Rigidbody rb;
 
+    public static bool inAir;
+    
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        if (jetpack)
+        {
+            currentFuel = fuel;
+            canUseJetPack = true;
+        }
+
+        SetAbilities();
+    }
+
+    void SetAbilities()
+    {
+        jetpack = PlayerInput.jetpack;
     }
 
     private void Update ()
@@ -42,10 +69,36 @@ public class PlayerMovement : MonoBehaviour
     {
         Movement();
         Rotate();
-        Jump();
+
+        if (!jetpack)
+        {
+            Jump();
+        }
+        else
+        {
+            #region JetPackLogic
+                        if (Grounded())
+                            jetPackOnCooldown = false;
+
+                        if (canUseJetPack)
+                            JetPack();
+                        else
+                        {
+                            if(!jetPackOnCooldown)
+                            RegenerateFuel();
+
+                            Jump();
+                        }
+            #endregion
+        }
 
         if (!Grounded())
+        {
+            inAir = true;
             Fall();
+        }
+        else
+            inAir = false;
     }
 
     void RecieveInput()
@@ -61,7 +114,6 @@ public class PlayerMovement : MonoBehaviour
     void Movement()
     {
         direction = new Vector3(horizontal * speed, 0, vertical * speed);
-        print(horizontal + " " +  vertical);
 
         direction *= Time.deltaTime;
         direction = transform.TransformDirection(direction);
@@ -82,6 +134,58 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
         }
     }
+
+    #region JetPack
+        void JetPack()
+        {
+            if (isJumping)
+            {
+                rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
+
+                if(!consumingFuel)
+                {
+                    consumingFuel = true;
+                    StartCoroutine(ConsumeFuel());
+
+                    if (currentFuel <= 0)
+                    {
+                        jetPackOnCooldown = true;
+                        canUseJetPack = false;
+                    }
+                }
+            }
+            else
+            {
+                RegenerateFuel();
+            }
+        }
+
+        void RegenerateFuel()
+        {
+            if (currentFuel > 0)
+                canUseJetPack = true;
+
+            if (currentFuel < fuel && !regainingFuel)
+            {
+                regainingFuel = true;
+                StartCoroutine(RegainFuel());
+            }
+        }
+
+        IEnumerator ConsumeFuel()
+        {
+            currentFuel -= 10;
+            yield return new WaitForSeconds(fuelConsumtionRate);
+            consumingFuel = false;
+        }
+
+        IEnumerator RegainFuel()
+        {
+            currentFuel += 10;
+            yield return new WaitForSeconds(fuelRegenerationRate);
+            regainingFuel = false;
+        }
+    #endregion
 
     void Fall()
     {
