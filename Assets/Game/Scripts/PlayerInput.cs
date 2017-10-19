@@ -37,6 +37,7 @@ public class PlayerInput : MonoBehaviour
 
     [Header("Abilities")]
     public bool _jetpack;
+    public bool _dash;
 
     public static float horizontal;
     public static float horizontal2;
@@ -45,6 +46,7 @@ public class PlayerInput : MonoBehaviour
     public static float vertical2;
 
     public static bool isJumping;
+    public static bool isDashing;
     public static bool isMoving;
     public static bool isDead;
 
@@ -52,6 +54,7 @@ public class PlayerInput : MonoBehaviour
     public static bool isAiming;
 
     public static bool jetpack;
+    public static bool dash;
 
     private void Start()
     {
@@ -64,6 +67,7 @@ public class PlayerInput : MonoBehaviour
     void SetAbilities()
     {
         jetpack = _jetpack;
+        dash = _dash;
     }
 
     private void Update()
@@ -81,6 +85,7 @@ public class PlayerInput : MonoBehaviour
 
         isMoving = controls.Move;
         isJumping = controls.Jump;
+        isDashing = controls.Sprint;
 
         isFiring = controls.Fire;
         isAiming = controls.Aim;

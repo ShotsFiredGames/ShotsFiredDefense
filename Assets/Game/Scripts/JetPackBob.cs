@@ -32,16 +32,15 @@ public class JetPackBob : MonoBehaviour
         zRotation = ClampAngle(zRotation, -zClampValue, zClampValue);
 
         xRotation += vertical * xSpeed * Time.fixedDeltaTime;
-        xRotation += vertical2 * xSpeed * Time.fixedDeltaTime;
         xRotation = ClampAngle(xRotation, -xClampValue, xClampValue);
 
         gunRotation = Quaternion.Euler(xRotation, 0, zRotation);
         //transform.rotation = gunRotation;
 
-        if (horizontal != 0 || horizontal2 != 0 || vertical != 0 || vertical2 != 0)
+        if (horizontal != 0 || horizontal2 != 0 || vertical != 0)
             transform.localRotation = Quaternion.Slerp(transform.localRotation, gunRotation, 1);
-        else if(horizontal == 0 && horizontal2 == 0 || vertical == 0 && vertical2 == 0)
-            transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.identity, 1);
+        else if(horizontal == 0 && horizontal2 == 0 && vertical == 0)
+            transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.identity, .5f);
     }
 
     public static float ClampAngle(float angle, float min, float max)

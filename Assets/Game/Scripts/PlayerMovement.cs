@@ -14,6 +14,13 @@ public class PlayerMovement : MonoBehaviour
     public float gravity;
     public LayerMask ground;
 
+    [Space, Header("Dash Variables")]
+    public float dashForce;
+    public GameObject dashStreaks;
+    
+    bool dashing;
+
+    #region Jetpack Variables
     [Space, Header("JetPack Variables")]
     public float fuel = 100;
     public float fuelConsumtionRate;
@@ -25,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
     bool regainingFuel;
     bool canUseJetPack;
     bool jetPackOnCooldown;
+#endregion
 
     float horizontal;
     float vertical;
@@ -63,12 +71,24 @@ public class PlayerMovement : MonoBehaviour
     private void Update ()
     {
         RecieveInput();
+
+        print("Test");
+        if (PlayerInput.dash)
+        {
+            if (PlayerInput.isDashing && !dashing)
+            {
+                print("Can Dash");
+                dashing = true;
+                StartCoroutine(Dash());
+            }
+        }
     }
 
     private void LateUpdate()
     {
         Movement();
         Rotate();
+
 
         if (!jetpack)
         {
@@ -113,7 +133,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Movement()
     {
-        direction = new Vector3(horizontal * speed, 0, vertical * speed);
+        direction = new Vector3((horizontal * speed), 0, (vertical * speed));
 
         direction *= Time.deltaTime;
         direction = transform.TransformDirection(direction);
@@ -133,6 +153,17 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
         }
+    }
+
+    IEnumerator Dash()
+    {
+        Camera.main.fieldOfView = 55;
+        rb.AddForce(transform.forward * dashForce, ForceMode.VelocityChange);
+        dashStreaks.SetActive(true);
+        yield return new WaitForSeconds(.1f);
+        Camera.main.fieldOfView = 60;
+        dashStreaks.SetActive(false);
+        dashing = false;
     }
 
     #region JetPack
