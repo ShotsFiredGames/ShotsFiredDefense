@@ -158,7 +158,7 @@ public class PlayerMovement : MonoBehaviour
     IEnumerator Dash()
     {
         Camera.main.fieldOfView = 55;
-        rb.AddForce(transform.forward * dashForce, ForceMode.VelocityChange);
+        rb.AddForce(new Vector3(transform.forward.x, 0, transform.forward.z) * dashForce, ForceMode.VelocityChange);
         dashStreaks.SetActive(true);
         yield return new WaitForSeconds(.1f);
         Camera.main.fieldOfView = 60;
