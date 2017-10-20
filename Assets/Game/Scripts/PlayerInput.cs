@@ -85,7 +85,7 @@ public class PlayerInput : MonoBehaviour
 
         isMoving = controls.Move;
         isJumping = controls.Jump;
-        isDashing = controls.Sprint;
+        isDashing = controls.Sprint.WasPressed;
 
         isFiring = controls.Fire;
         isAiming = controls.Aim;
